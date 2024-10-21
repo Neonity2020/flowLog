@@ -1,7 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
 import { format, parseISO } from "date-fns"
 
 interface JournalEntry {
@@ -16,11 +18,13 @@ interface JournalEntryListProps {
 }
 
 export default function JournalEntryList({ entries }: JournalEntryListProps) {
-  // 对所有条目进行排序，最新的在前
+  const [isAscending, setIsAscending] = useState(false)
+
+  // 对所有条目进行排序
   const sortedEntries = [...entries].sort((a, b) => {
     const dateA = new Date(a.timestamp);
     const dateB = new Date(b.timestamp);
-    return dateB.getTime() - dateA.getTime();
+    return isAscending ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
   });
 
   // 按日期分组
@@ -34,12 +38,12 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
     groupedEntries[dateKey].push(entry);
   });
 
-  // 对每一天的条目进行排序，最早的在前
+  // 对每一天的条目进行排序
   Object.values(groupedEntries).forEach(dayEntries => {
     dayEntries.sort((a, b) => {
       const timeA = new Date(a.timestamp).getTime();
       const timeB = new Date(b.timestamp).getTime();
-      return timeA - timeB;
+      return isAscending ? timeA - timeB : timeB - timeA;
     });
   });
 
@@ -47,6 +51,20 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
     <Card>
       <CardHeader>
         <CardTitle>最近的日志</CardTitle>
+        <div className="flex space-x-2 mt-2">
+          <Button
+            variant={isAscending ? "default" : "outline"}
+            onClick={() => setIsAscending(true)}
+          >
+            正序排列
+          </Button>
+          <Button
+            variant={!isAscending ? "default" : "outline"}
+            onClick={() => setIsAscending(false)}
+          >
+            倒序排列
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[500px] pr-4">
