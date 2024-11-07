@@ -17,6 +17,29 @@ interface JournalEntryListProps {
   entries: JournalEntry[];
 }
 
+// 添加URL解析函数
+const parseURLs = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  
+  return parts.map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-600 hover:underline"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
+
 export default function JournalEntryList({ entries }: JournalEntryListProps) {
   const [isAscending, setIsAscending] = useState(false)
 
@@ -78,7 +101,8 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
                 return (
                   <div key={entry.id} className="mb-2">
                     <p className="text-sm text-gray-900 dark:text-gray-100">
-                      {format(entryTimestamp, "HH:mm:ss")} {entry.content}
+                      {format(entryTimestamp, "HH:mm:ss")}{" "}
+                      <span>{parseURLs(entry.content)}</span>
                     </p>
                   </div>
                 );
