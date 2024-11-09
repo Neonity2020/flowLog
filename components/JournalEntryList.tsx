@@ -4,41 +4,14 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
-import { format, parseISO } from "date-fns"
-
-interface JournalEntry {
-  id: string;
-  date: Date | string;
-  content: string;
-  timestamp: Date | string;
-}
+import { format, parseISO, formatDistanceToNow } from "date-fns"
+import { JournalEntry } from '@/lib/types';
+import { ParsedContent } from './ParsedContent';
+import { zhCN } from 'date-fns/locale';
 
 interface JournalEntryListProps {
   entries: JournalEntry[];
 }
-
-// 添加URL解析函数
-const parseURLs = (text: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const parts = text.split(urlRegex);
-  
-  return parts.map((part, index) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:text-blue-600 hover:underline"
-        >
-          {part}
-        </a>
-      );
-    }
-    return part;
-  });
-};
 
 export default function JournalEntryList({ entries }: JournalEntryListProps) {
   const [isAscending, setIsAscending] = useState(false)
@@ -100,10 +73,16 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
                 const entryTimestamp = typeof entry.timestamp === 'string' ? parseISO(entry.timestamp) : entry.timestamp;
                 return (
                   <div key={entry.id} className="mb-2">
-                    <p className="text-sm text-gray-900 dark:text-gray-100">
-                      {format(entryTimestamp, "HH:mm:ss")}{" "}
-                      <span>{parseURLs(entry.content)}</span>
-                    </p>
+                    <div className="flex justify-between items-center text-sm text-muted-foreground mb-2">
+                      <span>{new Date(entry.date).toLocaleDateString('zh-CN')}</span>
+                      <span title={new Date(entry.timestamp).toLocaleString('zh-CN')}>
+                        {formatDistanceToNow(new Date(entry.timestamp), { 
+                          addSuffix: true,
+                          locale: zhCN 
+                        })}
+                      </span>
+                    </div>
+                    <ParsedContent content={entry.content} />
                   </div>
                 );
               })}
