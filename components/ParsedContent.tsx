@@ -24,7 +24,7 @@ export function ParsedContent({ content }: ParsedContentProps) {
       parts.push(
         <Link
           key={`wiki-${match.index}`}
-          href={`/entries/${encodeURIComponent(title)}/edit`}
+          href={`/entries/${encodeURIComponent(title)}/`}
           className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
         >
           {title}
