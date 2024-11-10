@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import JournalEntryForm from '@/components/JournalEntryForm';
 import JournalEntryList from '@/components/JournalEntryList';
 import { JournalEntry } from '@/lib/types';
-import { Button } from "@/components/ui/button"
 import { generateMarkdown, downloadMarkdown } from '@/lib/exportUtils';
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function Home() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -45,14 +45,9 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-center">心流日志</h1>
-        <Button 
-          onClick={handleExport}
-          className="bg-primary hover:bg-primary/90"
-        >
-          导出为 Markdown
-        </Button>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">心流日志</h1>
+        <ThemeToggle />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <JournalEntryForm onAddLog={addLog} />
