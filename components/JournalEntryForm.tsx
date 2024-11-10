@@ -72,7 +72,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onAddLog }) => {
         </Popover>
       </div>
       <Textarea
-        placeholder="在此输入日志内容..."
+        placeholder="在此输入日志内容...(win端按ctrl+enter保存日志；Mac端按cmd+enter保存日志)"
         value={entry}
         onChange={(e) => setEntry(e.target.value)}
         onKeyDown={handleKeyDown}
