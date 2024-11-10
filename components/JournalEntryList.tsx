@@ -8,6 +8,7 @@ import { format, parseISO, formatDistanceToNow } from "date-fns"
 import { JournalEntry } from '@/lib/types';
 import { ParsedContent } from './ParsedContent';
 import { zhCN } from 'date-fns/locale';
+import { ArrowUpDown } from "lucide-react"
 
 interface JournalEntryListProps {
   entries: JournalEntry[];
@@ -46,19 +47,17 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>最近的日志</CardTitle>
-        <div className="flex space-x-2 mt-2">
+        <div className="flex items-center justify-between">
+          <CardTitle>最近的日志</CardTitle>
           <Button
-            variant={isAscending ? "default" : "outline"}
-            onClick={() => setIsAscending(true)}
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsAscending(!isAscending)}
+            title={isAscending ? "切换为倒序" : "切换为正序"}
           >
-            正序排列
-          </Button>
-          <Button
-            variant={!isAscending ? "default" : "outline"}
-            onClick={() => setIsAscending(false)}
-          >
-            倒序排列
+            <ArrowUpDown className={`h-4 w-4 transition-transform duration-200 ${
+              isAscending ? 'rotate-0' : 'rotate-180'
+            }`} />
           </Button>
         </div>
       </CardHeader>

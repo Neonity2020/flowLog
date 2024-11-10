@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Send } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface JournalEntryFormProps {
@@ -29,6 +29,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onAddLog }) => {
       })
       return;
     }
+    
     console.log('保存日志:', { date, entry });
     toast({
       title: "日志已保存",
@@ -36,6 +37,12 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onAddLog }) => {
     })
     onAddLog(date, entry);
     setEntry('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      handleSubmit(e);
+    }
   };
 
   return (
@@ -65,12 +72,18 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onAddLog }) => {
         </Popover>
       </div>
       <Textarea
-        placeholder="Write your journal entry here..."
+        placeholder="在此输入日志内容..."
         value={entry}
         onChange={(e) => setEntry(e.target.value)}
+        onKeyDown={handleKeyDown}
         className="min-h-[200px]"
       />
-      <Button type="submit">Save Entry</Button>
+      <div className="flex justify-end">
+        <Button type="submit">
+          保存日志
+          <Send className="ml-2 h-4 w-4 rotate-45" />
+        </Button>
+      </div>
     </form>
   );
 };
