@@ -43,6 +43,10 @@ export default function Home() {
     downloadMarkdown(markdown, filename);
   };
 
+  const handleEntriesUpdate = (newEntries: JournalEntry[]) => {
+    saveEntries(newEntries);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex items-center justify-between mb-4">
@@ -51,7 +55,10 @@ export default function Home() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <JournalEntryForm onAddLog={addLog} />
-        <JournalEntryList entries={entries} />
+        <JournalEntryList 
+          entries={entries} 
+          onEntriesUpdate={handleEntriesUpdate}
+        />
       </div>
     </div>
   );

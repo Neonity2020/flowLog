@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
@@ -8,14 +8,57 @@ import { format, parseISO, formatDistanceToNow } from "date-fns"
 import { JournalEntry } from '@/lib/types';
 import { ParsedContent } from './ParsedContent';
 import { zhCN } from 'date-fns/locale';
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Import, FileDown, Upload, Download } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { generateMarkdown, downloadMarkdown, importMarkdown } from '@/lib/exportUtils';
 
 interface JournalEntryListProps {
   entries: JournalEntry[];
+  onEntriesUpdate?: (entries: JournalEntry[]) => void;
 }
 
-export default function JournalEntryList({ entries }: JournalEntryListProps) {
+export default function JournalEntryList({ entries, onEntriesUpdate }: JournalEntryListProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
   const [isAscending, setIsAscending] = useState(false)
+
+  const handleExport = () => {
+    const markdown = generateMarkdown(entries);
+    const filename = `心流日志_${new Date().toLocaleDateString('zh-CN')}.md`;
+    downloadMarkdown(markdown, filename);
+  };
+
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const importedEntries = await importMarkdown(file);
+      if (onEntriesUpdate) {
+        onEntriesUpdate([...importedEntries, ...entries]);
+      }
+      toast({
+        title: "导入成功",
+        description: `成功导入 ${importedEntries.length} 条记录`,
+      });
+    } catch (error) {
+      toast({
+        title: "导入失败",
+        description: "文件格式不正确或读取失败",
+        variant: "destructive",
+      });
+    }
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   // 对所有条目进行排序
   const sortedEntries = [...entries].sort((a, b) => {
@@ -48,7 +91,31 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
     <Card className="bg-background">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>最近的日志</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>最近的日志</CardTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleExport}>
+                  导出为 Markdown
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                  导入 Markdown
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImport}
+              accept=".md"
+              className="hidden"
+            />
+          </div>
           <Button
             variant="ghost"
             size="icon"

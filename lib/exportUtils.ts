@@ -20,3 +20,26 @@ export function downloadMarkdown(content: string, filename: string) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+export async function importMarkdown(file: File): Promise<JournalEntry[]> {
+  const text = await file.text();
+  const entries: JournalEntry[] = [];
+  const sections = text.split('## ').filter(Boolean);
+  
+  sections.forEach(section => {
+    const lines = section.trim().split('\n');
+    const dateStr = lines[0].trim();
+    const content = lines.slice(1).join('\n').replace(/\n---\n$/, '').trim();
+    
+    if (dateStr && content) {
+      entries.push({
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        date: new Date().toISOString(),
+        content: content,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+  
+  return entries;
+}
