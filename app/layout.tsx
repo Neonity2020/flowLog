@@ -8,8 +8,8 @@ import { ThemeToggle } from "@/components/theme-toggle"
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Daily Journal',
-  description: 'A simple and intuitive daily journaling application',
+  title: 'FlowLog | 心流日志',
+  description: 'A simple log app that helps you quickly enter a flow state | 一个简单的心流日志应用，帮助你快速进入心流状态',
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '32x32' },
@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
+      <body className={`${inter.className} antialiased bg-[rgb(244,244,245)] dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

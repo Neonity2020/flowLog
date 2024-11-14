@@ -45,7 +45,7 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
   });
 
   return (
-    <Card>
+    <Card className="bg-background">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>最近的日志</CardTitle>
@@ -81,7 +81,9 @@ export default function JournalEntryList({ entries }: JournalEntryListProps) {
                         })}
                       </span>
                     </div>
-                    <ParsedContent content={entry.content} />
+                    <div className="whitespace-pre-wrap">
+                      <ParsedContent content={entry.content} />
+                    </div>
                   </div>
                 );
               })}
